@@ -12,9 +12,9 @@ export default function App() {
   return (
     <PaperProvider>
       <NavigationContainer>
-        <Drawer.Navigator initialRouteName="Home">
+        <Drawer.Navigator initialRouteName="Venda em Casa">
     
-          <Drawer.Screen name="Home" component={StackRoutes} />
+          <Drawer.Screen name="Venda em Casa" component={StackRoutes} />
         
         </Drawer.Navigator>
       </NavigationContainer>
