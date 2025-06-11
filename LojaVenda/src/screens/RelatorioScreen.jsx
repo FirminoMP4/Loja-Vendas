@@ -2,8 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Dimensions, ScrollView } from 'react-native';
 import { Title, Text, Card, Paragraph } from 'react-native-paper';
 import { LineChart } from 'react-native-chart-kit';
+import { styles } from '../styles/RelatorioStyles';
+
+
 
 import RelatorioService from '../services/RelatorioService';
+import { useIsFocused } from '@react-navigation/native';
 
 export default function RelatorioScreen() {
   const [totalPedidos, setTotalPedidos] = useState(0);
@@ -12,9 +16,13 @@ export default function RelatorioScreen() {
   const [receitaTotalBRL, setReceitaTotalBRL] = useState(0);
   const [graficoData, setGraficoData] = useState({ labels: [], datasets: [{ data: [] }] });
 
+  const isFocused = useIsFocused();
+
   useEffect(() => {
-    carregarDados();
-  }, []);
+    if (isFocused) {
+      carregarDados();
+    }
+  }, [isFocused]);
 
   async function carregarDados() {
     const resumo = await RelatorioService.obterResumoFinanceiro();
@@ -97,20 +105,3 @@ export default function RelatorioScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: '#fff' },
-  cardsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  card: {
-    width: '48%',
-    marginBottom: 16,
-  },
-  number: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-});

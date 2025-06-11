@@ -15,6 +15,7 @@ export default function PedidoLista({ navigation }) {
     return unsubscribe;
   }, [navigation]);
 
+  
   async function carregarDados() {
     const pedidos = await PedidoService.listar();
     const clientes = await ClienteService.listar();

@@ -2,6 +2,11 @@ import PedidoService from './PedidoService';
 import ClienteService from './ClienteService';
 import ProdutoService from './ProdutoService';
 
+const formatarData = (isoString) => {
+  if (!isoString) return 'Sem Data';
+  return isoString.split('T')[0]; // yyyy-mm-dd
+};
+
 async function obterResumoFinanceiro() {
   const pedidos = await PedidoService.listar();
   const clientes = await ClienteService.listar();
@@ -13,21 +18,26 @@ async function obterResumoFinanceiro() {
 
   let receitaTotalBRL = 0;
 
-  // Calcula receita total
   pedidos.forEach(pedido => {
-    const produto = produtos.find(p => p.id === pedido.produtoId);
+    // Comparar IDs como string para evitar erros
+    const produto = produtos.find(p => p.id.toString() === pedido.produtoId.toString());
     if (produto) {
-      receitaTotalBRL += pedido.quantidade * produto.preco;
+      const quantidade = parseFloat(pedido.quantidade);
+      const preco = parseFloat(produto.preco);
+      receitaTotalBRL += quantidade * preco;
     }
   });
 
-  // Calcula receita por data para o gráfico
+  receitaTotalBRR = parseFloat(receitaTotalBRL.toFixed(2));
+
   const receitaPorData = {};
   pedidos.forEach(pedido => {
-    const data = pedido.data || 'Sem Data';
-    const produto = produtos.find(p => p.id === pedido.produtoId);
+    const data = formatarData(pedido.data);
+    const produto = produtos.find(p => p.id.toString() === pedido.produtoId.toString());
     if (produto) {
-      receitaPorData[data] = (receitaPorData[data] || 0) + pedido.quantidade * produto.preco;
+      const quantidade = parseFloat(pedido.quantidade);
+      const preco = parseFloat(produto.preco);
+      receitaPorData[data] = (receitaPorData[data] || 0) + quantidade * preco;
     }
   });
 

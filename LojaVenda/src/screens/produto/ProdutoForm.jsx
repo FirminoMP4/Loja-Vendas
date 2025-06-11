@@ -90,6 +90,21 @@ export default function ProdutoForm({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 10, backgroundColor: '#fff', flex: 1 },
-  btn: { marginTop: 20 },
+  container: {
+    padding: 16,
+    backgroundColor: '#fafafa',
+    flex: 1,
+  },
+  input: {
+    marginBottom: 12,
+    backgroundColor: '#fff',
+  },
+  btn: {
+    marginTop: 20,
+    borderRadius: 8,
+    backgroundColor: '#6200ee',
+  },
+  btnContent: {
+    paddingVertical: 8,
+  },
 });

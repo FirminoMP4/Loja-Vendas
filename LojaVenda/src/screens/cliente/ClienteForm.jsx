@@ -1,8 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { View } from 'react-native';
-import { Button, TextInput } from 'react-native-paper';
+import { View, StyleSheet, ScrollView } from 'react-native';
+import { TextInput, Button, Text } from 'react-native-paper';
 import { TextInputMask } from 'react-native-masked-text';
 import ClienteService from '../../services/ClienteService';
+
+function MaskedField({ label, value, onChangeText, type, options }) {
+  return (
+    <View style={styles.maskedContainer}>
+      <Text style={styles.label}>{label}</Text>
+      <TextInputMask
+        type={type}
+        options={options}
+        value={value}
+        onChangeText={onChangeText}
+        style={styles.maskedInput}
+        keyboardType={type === 'cpf' || type === 'cel-phone' ? 'numeric' : 'default'}
+      />
+    </View>
+  );
+}
 
 export default function ClienteForm({ navigation, route }) {
   const [cliente, setCliente] = useState({
@@ -35,72 +51,89 @@ export default function ClienteForm({ navigation, route }) {
   };
 
   return (
-    <View style={{ padding: 16 }}>
+    <ScrollView contentContainerStyle={styles.container}>
       <TextInput
         label="Nome"
         value={cliente.nome}
         onChangeText={(text) => handleChange('nome', text)}
-        style={{ marginBottom: 8 }}
+        style={styles.input}
+        mode="outlined"
       />
+
       <TextInput
         label="Email"
         value={cliente.email}
         onChangeText={(text) => handleChange('email', text)}
-        style={{ marginBottom: 8 }}
+        style={styles.input}
         keyboardType="email-address"
+        mode="outlined"
       />
-     <TextInput
-  label="Telefone"
-  render={(props) => (
-    <TextInputMask
-      {...props}
-      type={'cel-phone'}
-      options={{
-        maskType: 'BRL',
-        withDDD: true,
-        dddMask: '(99) '
-      }}
-      value={cliente.telefone}
-      onChangeText={(text) => handleChange('telefone', text)}
-      style={{
-        backgroundColor: 'transparent',
-        marginBottom: 8,
-        fontSize: 16,
-        paddingHorizontal: 12,
-        height: 56
-      }}
-      keyboardType="phone-pad"
-/>
-  )}
-/>
 
-      <TextInput
-        label="CPF"
-        render={(props) => (
-          <TextInputMask
-            {...props}
-            type={'cpf'}
-            value={cliente.cpf}
-            onChangeText={(text) => handleChange('cpf', text)}
-            style={{ backgroundColor: 'transparent', marginBottom: 8, fontSize: 16, paddingHorizontal: 12, height: 56 }}
-          />
-        )}
+      <MaskedField
+        label="Telefone"
+        type="cel-phone"
+        options={{ maskType: 'BRL', withDDD: true, dddMask: '(99) ' }}
+        value={cliente.telefone}
+        onChangeText={(text) => handleChange('telefone', text)}
       />
+
+      <MaskedField
+        label="CPF"
+        type="cpf"
+        value={cliente.cpf}
+        onChangeText={(text) => handleChange('cpf', text)}
+      />
+
       <TextInput
         label="Endereço"
         value={cliente.endereco}
         onChangeText={(text) => handleChange('endereco', text)}
-        style={{ marginBottom: 8 }}
+        style={styles.input}
+        mode="outlined"
       />
+
       <TextInput
         label="Cidade"
         value={cliente.cidade}
         onChangeText={(text) => handleChange('cidade', text)}
-        style={{ marginBottom: 8 }}
+        style={styles.input}
+        mode="outlined"
       />
-      <Button mode="contained" onPress={salvar}>
+
+      <Button mode="contained" onPress={salvar} style={styles.button}>
         Salvar
       </Button>
-    </View>
+    </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 16,
+  },
+  input: {
+    marginBottom: 12,
+    backgroundColor: 'white',
+  },
+  maskedContainer: {
+    marginBottom: 12,
+  },
+  label: {
+    fontSize: 14,
+    color: '#555',
+    marginBottom: 4,
+    fontWeight: '600',
+  },
+  maskedInput: {
+    height: 56,
+    borderColor: '#999',
+    borderWidth: 1,
+    borderRadius: 6,
+    paddingHorizontal: 12,
+    fontSize: 16,
+    backgroundColor: 'white',
+  },
+  button: {
+    marginTop: 16,
+  },
+});

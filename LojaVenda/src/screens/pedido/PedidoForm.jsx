@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Alert, Platform } from 'react-native';
+import { View, StyleSheet, Alert, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
 
@@ -13,6 +13,7 @@ export default function PedidoForm({ navigation, route }) {
     clienteId: '',
     produtoId: '',
     quantidade: '1',
+    data: new Date().toISOString(),
   });
 
   const [clientes, setClientes] = useState([]);
@@ -38,104 +39,136 @@ export default function PedidoForm({ navigation, route }) {
       return;
     }
 
-    if (pedido.id) {
-      await PedidoService.atualizar(pedido);
+    const pedidoFinal = {
+      ...pedido,
+      clienteId: pedido.clienteId.toString(),
+      produtoId: pedido.produtoId.toString(),
+      quantidade: parseFloat(pedido.quantidade),
+      data: pedido.data || new Date().toISOString(),
+    };
+
+    if (pedidoFinal.id) {
+      await PedidoService.atualizar(pedidoFinal);
     } else {
-      await PedidoService.inserir(pedido);
+      await PedidoService.inserir(pedidoFinal);
     }
+
     navigation.goBack();
   };
 
   return (
-    <View style={styles.container}>
-
-      <View style={styles.field}>
-        <Text style={styles.label}>Cliente:</Text>
-        <View style={styles.pickerWrapper}>
-          <Picker
-            selectedValue={pedido.clienteId}
-            onValueChange={(value) => setPedido({ ...pedido, clienteId: value })}
-            style={styles.picker}
-            itemStyle={styles.pickerItem}
-            mode="dropdown"
-          >
-            <Picker.Item label="Selecione um cliente" value="" />
-            {clientes.map(c => (
-              <Picker.Item key={c.id} label={c.nome} value={c.id.toString()} />
-            ))}
-          </Picker>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={styles.container}>
+        <View style={styles.field}>
+          <Text style={styles.label} accessibilityRole="header" accessibilityLevel={2}>
+            Cliente:
+          </Text>
+          <View style={styles.pickerWrapper}>
+            <Picker
+              selectedValue={pedido.clienteId}
+              onValueChange={(value) => setPedido({ ...pedido, clienteId: value })}
+              style={styles.picker}
+              itemStyle={styles.pickerItem}
+              mode="dropdown"
+              accessibilityLabel="Selecione o cliente"
+              accessibilityHint="Abre lista de clientes para seleção"
+            >
+              <Picker.Item label="Selecione um cliente" value="" />
+              {clientes.map(c => (
+                <Picker.Item key={c.id} label={c.nome} value={c.id.toString()} />
+              ))}
+            </Picker>
+          </View>
         </View>
-      </View>
 
-      <View style={styles.field}>
-        <Text style={styles.label}>Produto:</Text>
-        <View style={styles.pickerWrapper}>
-          <Picker
-            selectedValue={pedido.produtoId}
-            onValueChange={(value) => setPedido({ ...pedido, produtoId: value })}
-            style={styles.picker}
-            itemStyle={styles.pickerItem}
-            mode="dropdown"
-          >
-            <Picker.Item label="Selecione um produto" value="" />
-            {produtos.map(p => (
-              <Picker.Item key={p.id} label={p.nome} value={p.id.toString()} />
-            ))}
-          </Picker>
+        <View style={styles.field}>
+          <Text style={styles.label} accessibilityRole="header" accessibilityLevel={2}>
+            Produto:
+          </Text>
+          <View style={styles.pickerWrapper}>
+            <Picker
+              selectedValue={pedido.produtoId}
+              onValueChange={(value) => setPedido({ ...pedido, produtoId: value })}
+              style={styles.picker}
+              itemStyle={styles.pickerItem}
+              mode="dropdown"
+              accessibilityLabel="Selecione o produto"
+              accessibilityHint="Abre lista de produtos para seleção"
+            >
+              <Picker.Item label="Selecione um produto" value="" />
+              {produtos.map(p => (
+                <Picker.Item key={p.id} label={p.nome} value={p.id.toString()} />
+              ))}
+            </Picker>
+          </View>
         </View>
-      </View>
 
-      <View style={styles.field}>
-        <Text style={styles.label}>Quantidade:</Text>
-        <View style={styles.pickerWrapper}>
-          <Picker
-            selectedValue={pedido.quantidade}
-            onValueChange={(value) => setPedido({ ...pedido, quantidade: value })}
-            style={styles.picker}
-            itemStyle={styles.pickerItem}
-            mode="dropdown"
-          >
-            {[...Array(10)].map((_, i) => (
-              <Picker.Item key={i + 1} label={`${i + 1}`} value={`${i + 1}`} />
-            ))}
-          </Picker>
+        <View style={styles.field}>
+          <Text style={styles.label} accessibilityRole="header" accessibilityLevel={2}>
+            Quantidade:
+          </Text>
+          <View style={styles.pickerWrapper}>
+            <Picker
+              selectedValue={pedido.quantidade}
+              onValueChange={(value) => setPedido({ ...pedido, quantidade: value })}
+              style={styles.picker}
+              itemStyle={styles.pickerItem}
+              mode="dropdown"
+              accessibilityLabel="Selecione a quantidade"
+              accessibilityHint="Abre lista para selecionar quantidade"
+            >
+              {[...Array(10)].map((_, i) => (
+                <Picker.Item key={i + 1} label={`${i + 1}`} value={`${i + 1}`} />
+              ))}
+            </Picker>
+          </View>
         </View>
-      </View>
 
-      <Button mode="contained" onPress={salvar} style={styles.button}>
-        Salvar Pedido
-      </Button>
-    </View>
+        <Button
+          mode="contained"
+          onPress={salvar}
+          style={styles.button}
+          accessibilityLabel="Botão salvar pedido"
+          accessibilityHint="Salva o pedido e volta para a tela anterior"
+          rippleColor="#6200ee"
+        >
+          Salvar Pedido
+        </Button>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    padding: 24,
+    backgroundColor: '#f9f9f9',
   },
   field: {
-    marginBottom: 20,
+    marginBottom: 24,
   },
   label: {
-    fontSize: 16,
-    marginBottom: 6,
-    fontWeight: '600',
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 8,
+    color: '#333',
   },
   pickerWrapper: {
     borderWidth: 1,
-    borderColor: '#999',
-    borderRadius: 5,
+    borderColor: '#bbb',
+    borderRadius: 8,
     overflow: 'hidden',
     backgroundColor: 'white',
     ...Platform.select({
-      android: {
-        height: 45,
-      },
-      ios: {
-        height: 150, 
-      },
+      android: { height: 50 },
+      ios: { height: 150 },
     }),
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 3,
   },
   picker: {
     width: '100%',
@@ -145,6 +178,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   button: {
-    marginTop: 10,
+    marginTop: 16,
+    paddingVertical: 10,
+    borderRadius: 8,
   },
 });
