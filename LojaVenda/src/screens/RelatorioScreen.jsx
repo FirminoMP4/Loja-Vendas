@@ -4,8 +4,6 @@ import { Title, Text, Card, Paragraph } from 'react-native-paper';
 import { LineChart } from 'react-native-chart-kit';
 import { styles } from '../styles/RelatorioStyles';
 
-
-
 import RelatorioService from '../services/RelatorioService';
 import { useIsFocused } from '@react-navigation/native';
 
@@ -13,7 +11,7 @@ export default function RelatorioScreen() {
   const [totalPedidos, setTotalPedidos] = useState(0);
   const [totalClientes, setTotalClientes] = useState(0);
   const [totalProdutos, setTotalProdutos] = useState(0);
-  const [receitaTotalBRL, setReceitaTotalBRL] = useState(0);
+  const [receitaTotal, setReceitaTotal] = useState(0);  // mudou aqui
   const [graficoData, setGraficoData] = useState({ labels: [], datasets: [{ data: [] }] });
 
   const isFocused = useIsFocused();
@@ -31,7 +29,7 @@ export default function RelatorioScreen() {
     setTotalPedidos(resumo.totalPedidos);
     setTotalClientes(resumo.totalClientes);
     setTotalProdutos(resumo.totalProdutos);
-    setReceitaTotalBRL(resumo.receitaTotalBRL);
+    setReceitaTotal(resumo.receitaTotal);  // mudou aqui
 
     if (resumo.graficoData.labels.length === 0) {
       console.warn('Dados do gráfico vazios, usando dados de teste');
@@ -73,7 +71,7 @@ export default function RelatorioScreen() {
         <Card style={styles.card}>
           <Card.Title title="Receita Total (R$)" />
           <Card.Content>
-            <Paragraph style={styles.number}>{receitaTotalBRL.toFixed(2)}</Paragraph>
+            <Paragraph style={styles.number}>{(receitaTotal ?? 0).toFixed(2)}</Paragraph>
           </Card.Content>
         </Card>
       </View>
@@ -104,4 +102,3 @@ export default function RelatorioScreen() {
     </ScrollView>
   );
 }
-
