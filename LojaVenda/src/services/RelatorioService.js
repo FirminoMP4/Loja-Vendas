@@ -19,7 +19,6 @@ async function obterResumoFinanceiro() {
   let receitaTotalBRL = 0;
 
   pedidos.forEach(pedido => {
-    // Comparar IDs como string para evitar erros
     const produto = produtos.find(p => p.id.toString() === pedido.produtoId.toString());
     if (produto) {
       const quantidade = parseFloat(pedido.quantidade);
@@ -28,7 +27,7 @@ async function obterResumoFinanceiro() {
     }
   });
 
-  receitaTotalBRR = parseFloat(receitaTotalBRL.toFixed(2));
+  const receitaTotal = parseFloat(receitaTotalBRL.toFixed(2));
 
   const receitaPorData = {};
   pedidos.forEach(pedido => {
@@ -53,7 +52,7 @@ async function obterResumoFinanceiro() {
     totalPedidos,
     totalClientes,
     totalProdutos,
-    receitaTotalBRL,
+    receitaTotal,
     graficoData,
   };
 }
